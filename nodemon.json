@@ -1,7 +1,8 @@
 {
   "watch": [
     "src",
-    ".env"
+    ".env",
+    "node_modules/puppeteer-tsd/src/index.d.ts"
   ],
   "ext": "js,ts,json",
   "ignore": [
