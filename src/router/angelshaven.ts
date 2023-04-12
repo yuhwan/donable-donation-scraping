@@ -123,4 +123,28 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
   });
 });
 
+router.post(
+  "/check-finish-new-donation",
+  async (req: Request, res: Response) => {
+    // 기존 페이지 찾기
+    const { pageId } = req.body;
+    const browser = getPuppeteerBrowser();
+    const pages = await browser.pages();
+    // @ts-expect-error
+    const page = pages.find((p) => p.mainFrame()._id === pageId);
+    if (page === undefined) return res.json({ success: false });
+
+    // page에서 체크하기
+    const checkPoint = await page.$(".kakaocert-entry-container > iframe");    
+    res.json({
+      success: checkPoint !== null
+    });
+
+    // page 닫기
+    if (checkPoint !== null) {
+      await page.close();
+    }
+  }
+);
+
 export default router;
