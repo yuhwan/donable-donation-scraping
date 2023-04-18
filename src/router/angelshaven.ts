@@ -39,7 +39,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
 
     // 금액 선택
     await page.select(".nm_table_tr > td > ul > li > select", "20000");
-    await page.click(".nm_form_footer_btnbox > button");
+    await page.$eval(
+      ".nm_form_footer_btnbox > button",
+      (el: HTMLInputElement) => el.click()
+    );    
 
     // 후원자 정보 입력
     const { name, birthday, phoneNumber, bank, account, payDay, eventName } =
