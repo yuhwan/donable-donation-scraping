@@ -9,7 +9,7 @@ export async function startScrapingServer(callback) {
       "--disable-web-security",
     ],
     executablePath: process.env.CHROME_PATH,
-    headless: false,
+    headless: true,
   });
   callback();
 }
