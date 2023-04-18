@@ -8,6 +8,9 @@ router.post("/create-new-page", async (req: Request, res: Response) => {
   // 새로운 페이지 시작
   const browser = getPuppeteerBrowser();
   const page = await browser.newPage();
+  await page.setUserAgent(
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+  );
   res.json({
     // @ts-expect-error
     id: page.mainFrame()._id,
@@ -26,6 +29,9 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       page = pages.find((p) => p.mainFrame()._id === pageId);
     } else {
       page = await browser.newPage();
+      await page.setUserAgent(
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+      );
     }
 
     page.setViewport({ height: 860, width: 1024 });
