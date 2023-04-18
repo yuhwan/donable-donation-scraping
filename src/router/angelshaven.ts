@@ -5,16 +5,18 @@ const router = express.Router();
 const START_NEW_DONATION_URL = `https://mrmweb.hsit.co.kr/v2/Member/MemberJoin.aspx?action=join&server=1JzJUVYlCt9FlK1zaHHFbQ==&supportgroup=3`;
 
 router.post("/create-new-page", async (req: Request, res: Response) => {
-  // 새로운 페이지 시작
-  const browser = getPuppeteerBrowser();
-  const page = await browser.newPage();
-  await page.setUserAgent(
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
-  );
-  res.json({
-    // @ts-expect-error
-    id: page.mainFrame()._id,
-  });
+  try {
+    // 새로운 페이지 시작
+    const browser = getPuppeteerBrowser();
+    const page = await browser.newPage();
+    res.json({
+      // @ts-expect-error
+      id: page.mainFrame()._id,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).end();
+  }
 });
 
 router.post("/start-new-donation", async (req: Request, res: Response) => {
@@ -29,10 +31,11 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       page = pages.find((p) => p.mainFrame()._id === pageId);
     } else {
       page = await browser.newPage();
-      await page.setUserAgent(
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
-      );
-    }    
+    }
+
+    page.on("response", (resp) => {
+      console.log(resp.url(), resp.status());
+    });
 
     page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
@@ -209,20 +212,25 @@ router.get("/page-count", async (req: Request, res: Response) => {
 });
 
 router.get("/screenshot", async (req: Request, res: Response) => {
-  const { pageId } = req.body;
-  const browser = getPuppeteerBrowser();
-  const pages = await browser.pages();
-  // @ts-expect-error
-  const page = pages.find((p) => p.mainFrame()._id === pageId);
-  if (page === undefined) return res.json({ success: false });
+  try {
+    const { pageId } = req.body;
+    const browser = getPuppeteerBrowser();
+    const pages = await browser.pages();
+    // @ts-expect-error
+    const page = pages.find((p) => p.mainFrame()._id === pageId);
+    if (page === undefined) return res.json({ success: false });
 
-  const b64string = await page.screenshot({ encoding: "base64" });
-  const buffer = Buffer.from(b64string, "base64");
-  res.writeHead(200, {
-    "Content-Type": "image/png",
-    "Content-Length": buffer.length,
-  });
-  res.end(buffer);
+    const b64string = await page.screenshot({ encoding: "base64" });
+    const buffer = Buffer.from(b64string, "base64");
+    res.writeHead(200, {
+      "Content-Type": "image/png",
+      "Content-Length": buffer.length,
+    });
+    res.end(buffer);
+  } catch (error) {
+    console.log(error);
+    res.status(500).end();
+  }
 });
 
 router.post("/close-page", async (req: Request, res: Response) => {
