@@ -51,7 +51,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       "#ctl00_ContentPlaceHolder1_txtName",
       (el: HTMLInputElement, name) => (el.value = name),
       name
-    );    
+    );
     await page.select(
       "#ctl00_ContentPlaceHolder1_yBirth",
       birthday.split(".")[0]
@@ -91,7 +91,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       "#ctl00_ContentPlaceHolder1_txtRecommender",
       (el: HTMLInputElement) => (el.value = "도너블")
     );
-    await page.click("#ctl00_ContentPlaceHolder1_step2NextBtn");
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_step2NextBtn",
+      (el: HTMLInputElement) => el.click()
+    );
 
     // 후원금 납입방법
     await page.$eval(
