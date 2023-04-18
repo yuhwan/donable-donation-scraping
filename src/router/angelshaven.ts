@@ -144,7 +144,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500);
+    res.status(500).end();
   }
 });
 
