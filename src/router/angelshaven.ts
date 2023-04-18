@@ -162,10 +162,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       el.click()
     );
 
-    // await page.waitForSelector(".kakaocert-entry-container > iframe");
-    // const frameHandle = await page.$(".kakaocert-entry-container > iframe");
-    // const frame = await frameHandle.contentFrame();
-    // await frame.click("#btnRequest");
+    await page.waitForSelector(".kakaocert-entry-container > iframe");
+    const frameHandle = await page.$(".kakaocert-entry-container > iframe");
+    const frame = await frameHandle.contentFrame();
+    await frame.click("#btnRequest");
 
     res.json({
       id: page.mainFrame()._id,
