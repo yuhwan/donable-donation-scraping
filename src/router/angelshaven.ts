@@ -138,29 +138,29 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     );
     await page.select("#ctl00_ContentPlaceHolder1_ddlPayDay", payDay);
 
-    // // 동의하고 시작하기
-    // await page.$eval(
-    //   "#ctl00_ContentPlaceHolder1_chkCmsPolicy",
-    //   (el: HTMLInputElement) => el.click()
-    // );
-    // await page.$eval(
-    //   "#ctl00_ContentPlaceHolder1_chkJoinPolicy",
-    //   (el: HTMLInputElement) => el.click()
-    // );
-    // await page.$eval(
-    //   "#ctl00_ContentPlaceHolder1_chkPrivacyPolicyCollectAndUse",
-    //   (el: HTMLInputElement) => el.click()
-    // );
-    // await page.$eval(
-    //   "#ctl00_ContentPlaceHolder1_chkPrivacyOffer",
-    //   (el: HTMLInputElement) => el.click()
-    // );
-    // await page.$eval("#chkStep3Btn", (el: HTMLButtonElement) => el.click());
+    // 동의하고 시작하기
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_chkCmsPolicy",
+      (el: HTMLInputElement) => el.click()
+    );
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_chkJoinPolicy",
+      (el: HTMLInputElement) => el.click()
+    );
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_chkPrivacyPolicyCollectAndUse",
+      (el: HTMLInputElement) => el.click()
+    );
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_chkPrivacyOffer",
+      (el: HTMLInputElement) => el.click()
+    );
+    await page.$eval("#chkStep3Btn", (el: HTMLButtonElement) => el.click());
 
-    // // 진행 확인 및 카카오 인증 요청
-    // await page.$eval(".jconfirm-buttons > button", (el: HTMLButtonElement) =>
-    //   el.click()
-    // );
+    // 진행 확인 및 카카오 인증 요청
+    await page.$eval(".jconfirm-buttons > button", (el: HTMLButtonElement) =>
+      el.click()
+    );
 
     // await page.waitForSelector(".kakaocert-entry-container > iframe");
     // const frameHandle = await page.$(".kakaocert-entry-container > iframe");
