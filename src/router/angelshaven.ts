@@ -42,7 +42,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     await page.$eval(
       ".nm_form_footer_btnbox > button",
       (el: HTMLInputElement) => el.click()
-    );    
+    );
 
     // 후원자 정보 입력
     const { name, birthday, phoneNumber, bank, account, payDay, eventName } =
@@ -61,6 +61,9 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       "#ctl00_ContentPlaceHolder1_mBirth",
       (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[1]),
       birthday
+    );
+    await page.waitForSelector(
+      "#ctl00_ContentPlaceHolder1_dBirth > option[value='01']"
     );
     await page.$eval(
       "#ctl00_ContentPlaceHolder1_dBirth",
