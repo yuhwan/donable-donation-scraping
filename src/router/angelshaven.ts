@@ -4,10 +4,29 @@ const router = express.Router();
 
 const START_NEW_DONATION_URL = `https://mrmweb.hsit.co.kr/v2/Member/MemberJoin.aspx?action=join&server=1JzJUVYlCt9FlK1zaHHFbQ==&supportgroup=3`;
 
-router.post("/start-new-donation", async (req: Request, res: Response) => {
+router.post("/create-new-page", async (req: Request, res: Response) => {
   // 새로운 페이지 시작
   const browser = getPuppeteerBrowser();
   const page = await browser.newPage();
+  res.json({
+    // @ts-expect-error
+    id: page.mainFrame()._id,
+  });
+});
+
+router.post("/start-new-donation", async (req: Request, res: Response) => {
+  // 새로운 페이지 시작
+  const browser = getPuppeteerBrowser();
+  const { pageId } = req.body;
+  let page;
+  if (pageId !== undefined) {
+    const pages = await browser.pages();
+    // @ts-expect-error
+    page = pages.find((p) => p.mainFrame()._id === pageId);
+  } else {
+    page = await browser.newPage();
+  }
+
   page.setViewport({ height: 860, width: 1024 });
   await page.goto(START_NEW_DONATION_URL);
 
@@ -120,7 +139,6 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
   await frame.click("#btnRequest");
 
   res.json({
-    // @ts-expect-error
     id: page.mainFrame()._id,
   });
 });
