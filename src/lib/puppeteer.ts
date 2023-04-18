@@ -4,7 +4,11 @@ let _browser: Browser;
 
 export async function startScrapingServer(callback) {
   _browser = await puppeteer.launch({
-    args: ["--no-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
+      "--disable-web-security",
+    ],
     executablePath: process.env.CHROME_PATH,
     headless: true,
   });
