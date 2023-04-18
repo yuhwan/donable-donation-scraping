@@ -4,6 +4,7 @@ let _browser: Browser;
 
 export async function startScrapingServer(callback) {
   _browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
     executablePath: process.env.CHROME_PATH,
     headless: true,
   });
