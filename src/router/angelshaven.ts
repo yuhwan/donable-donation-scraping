@@ -37,6 +37,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       console.log(resp.url(), resp.status());
     });
 
+    page.on("request", (request) => {
+      console.log(request.url(), request.postData());
+    });
+
     page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
 
