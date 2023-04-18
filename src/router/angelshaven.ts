@@ -72,7 +72,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     await page.type("#ctl00_ContentPlaceHolder1_txtJoinComment", eventName);
     await page.type("#ctl00_ContentPlaceHolder1_txtRecommender", "도너블");
 
-    await page.click("#ctl00_ContentPlaceHolder1_step2NextBtn");
+    // await page.click("#ctl00_ContentPlaceHolder1_step2NextBtn");
 
     // 후원금 납입방법
     // await page.$eval(
