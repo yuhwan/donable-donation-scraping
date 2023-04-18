@@ -62,14 +62,6 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[1]),
       birthday
     );
-    await page.waitForSelector(
-      "#ctl00_ContentPlaceHolder1_dBirth > option[value='01']"
-    );
-    await page.$eval(
-      "#ctl00_ContentPlaceHolder1_dBirth",
-      (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[2]),
-      birthday
-    );
     await page.$eval(
       "#ctl00_ContentPlaceHolder1_Mobile1",
       (el: HTMLInputElement, phoneNumber) =>
@@ -96,6 +88,11 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     await page.$eval(
       "#ctl00_ContentPlaceHolder1_txtRecommender",
       (el: HTMLInputElement) => (el.value = "도너블")
+    );
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_dBirth",
+      (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[2]),
+      birthday
     );
     await page.click("#ctl00_ContentPlaceHolder1_step2NextBtn");
 
