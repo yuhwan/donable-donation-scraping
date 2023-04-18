@@ -34,7 +34,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       );
     }
 
-    page.setViewport({ height: 860, width: 1024 });
+    page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
 
     // 금액 선택
@@ -44,33 +44,53 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     // 후원자 정보 입력
     const { name, birthday, phoneNumber, bank, account, payDay, eventName } =
       req.body;
-    await page.type("#ctl00_ContentPlaceHolder1_txtName", name);
-    await page.select(
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_txtName",
+      (el: HTMLInputElement, name) => (el.value = name),
+      name
+    );
+    await page.$eval(
       "#ctl00_ContentPlaceHolder1_yBirth",
-      birthday.split(".")[0]
+      (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[0]),
+      birthday
     );
-    await page.select(
+    await page.$eval(
       "#ctl00_ContentPlaceHolder1_mBirth",
-      birthday.split(".")[1]
+      (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[1]),
+      birthday
     );
-    await page.select(
+    await page.$eval(
       "#ctl00_ContentPlaceHolder1_dBirth",
-      birthday.split(".")[2]
+      (el: HTMLInputElement, birthday) => (el.value = birthday.split(".")[2]),
+      birthday
     );
-    await page.type(
+    await page.$eval(
       "#ctl00_ContentPlaceHolder1_Mobile1",
-      phoneNumber.split("-")[0]
+      (el: HTMLInputElement, phoneNumber) =>
+        (el.value = phoneNumber.split("-")[0]),
+      phoneNumber
     );
-    await page.type(
+    await page.$eval(
       "#ctl00_ContentPlaceHolder1_Mobile2",
-      phoneNumber.split("-")[1]
+      (el: HTMLInputElement, phoneNumber) =>
+        (el.value = phoneNumber.split("-")[1]),
+      phoneNumber
     );
-    await page.type(
+    await page.$eval(
       "#ctl00_ContentPlaceHolder1_Mobile3",
-      phoneNumber.split("-")[2]
+      (el: HTMLInputElement, phoneNumber) =>
+        (el.value = phoneNumber.split("-")[2]),
+      phoneNumber
     );
-    await page.type("#ctl00_ContentPlaceHolder1_txtJoinComment", eventName);
-    await page.type("#ctl00_ContentPlaceHolder1_txtRecommender", "도너블");
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_txtJoinComment",
+      (el: HTMLInputElement, eventName) => (el.value = eventName),
+      eventName
+    );
+    await page.$eval(
+      "#ctl00_ContentPlaceHolder1_txtRecommender",
+      (el: HTMLInputElement) => (el.value = "도너블")
+    );
 
     // await page.click("#ctl00_ContentPlaceHolder1_step2NextBtn");
 
