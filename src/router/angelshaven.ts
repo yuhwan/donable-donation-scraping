@@ -16,7 +16,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
   await page.click(".nm_form_footer_btnbox > button");
 
   // 후원자 정보 입력
-  const { name, birthday, phoneNumber, bank, account, payDay, event } =
+  const { name, birthday, phoneNumber, bank, account, payDay, eventName } =
     req.body;
   await page.type("#ctl00_ContentPlaceHolder1_txtName", name);
   await page.select(
@@ -43,7 +43,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     "#ctl00_ContentPlaceHolder1_Mobile3",
     phoneNumber.split("-")[2]
   );
-  await page.type("#ctl00_ContentPlaceHolder1_txtJoinComment", event);
+  await page.type("#ctl00_ContentPlaceHolder1_txtJoinComment", eventName);
   await page.type("#ctl00_ContentPlaceHolder1_txtRecommender", "도너블");
 
   await page.click("#ctl00_ContentPlaceHolder1_step2NextBtn");
@@ -113,6 +113,8 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
   await page.$eval(".jconfirm-buttons > button", (el: HTMLButtonElement) =>
     el.click()
   );
+
+  await page.waitForSelector(".kakaocert-entry-container > iframe");
   const frameHandle = await page.$(".kakaocert-entry-container > iframe");
   const frame = await frameHandle.contentFrame();
   await frame.click("#btnRequest");
@@ -135,9 +137,11 @@ router.post(
     if (page === undefined) return res.json({ success: false });
 
     // page에서 체크하기
-    const checkPoint = await page.$(".kakaocert-entry-container > iframe");    
+    const checkPoint = await page.$(
+      "#ctl00_ContentPlaceHolder1_joinResultInfo"
+    );
     res.json({
-      success: checkPoint !== null
+      success: checkPoint !== null,
     });
 
     // page 닫기
@@ -146,5 +150,40 @@ router.post(
     }
   }
 );
+
+router.get("/page-count", async (req: Request, res: Response) => {
+  const browser = getPuppeteerBrowser();
+  const pages = await browser.pages();
+  res.json({ count: pages.length });
+});
+
+router.get("/screenshot", async (req: Request, res: Response) => {
+  const { pageId } = req.body;
+  const browser = getPuppeteerBrowser();
+  const pages = await browser.pages();
+  // @ts-expect-error
+  const page = pages.find((p) => p.mainFrame()._id === pageId);
+  if (page === undefined) return res.json({ success: false });
+
+  const b64string = await page.screenshot({ encoding: "base64" });
+  const buffer = Buffer.from(b64string, "base64");
+  res.writeHead(200, {
+    "Content-Type": "image/png",
+    "Content-Length": buffer.length,
+  });
+  res.end(buffer);
+});
+
+router.post("/close-page", async (req: Request, res: Response) => {
+  const { pageId } = req.body;
+  const browser = getPuppeteerBrowser();
+  const pages = await browser.pages();
+  // @ts-expect-error
+  const page = pages.find((p) => p.mainFrame()._id === pageId);
+  if (page === undefined) return res.json({ success: false });
+
+  await page.close();
+  res.json({ success: true });
+});
 
 export default router;
