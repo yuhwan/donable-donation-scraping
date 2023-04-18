@@ -33,16 +33,13 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       page = await browser.newPage();
     }
 
-    page.on("response", (resp) => {
-      console.log(resp.url(), resp.status());
-    });
-
-    page.on("request", (request) => {
-      console.log(request.url(), request.postData());
-    });
-
     page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
+
+    page.on("dialog", async (dialog) => {
+      console.log(dialog.message());
+      await dialog.accept();
+    });
 
     // 금액 선택
     await page.select(".nm_table_tr > td > ul > li > select", "20000");
