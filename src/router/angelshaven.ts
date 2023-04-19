@@ -57,6 +57,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       "#ctl00_ContentPlaceHolder1_ctl51_ctl00_ctl00_rdlamount",
       amount
     );
+    await page.waitForTimeout(500);
     await page.$eval(
       ".nm_form_footer_btnbox > button",
       (el: HTMLInputElement) => el.click()
@@ -93,6 +94,11 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     await page.type(
       "#ctl00_ContentPlaceHolder1_Mobile3",
       phoneNumber.split("-")[2],
+      { delay: 100 }
+    );
+    await page.type(
+      "#ctl00_ContentPlaceHolder1_Mobile1",
+      phoneNumber.split("-")[0],
       { delay: 100 }
     );
 
@@ -169,10 +175,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       "#ctl00_ContentPlaceHolder1_chkPrivacyOffer",
       (el: HTMLInputElement) => el.click()
     );
+    await page.waitForTimeout(1500);
     await page.$eval("#chkStep3Btn", (el: HTMLButtonElement) => el.click());
 
-    // 진행 확인 및 카카오 인증 요청
-    await page.waitForTimeout(1000);
+    // 진행 확인 및 카카오 인증 요청    
     await page.$eval(".jconfirm-buttons > button", (el: HTMLButtonElement) =>
       el.click()
     );
