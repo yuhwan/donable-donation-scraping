@@ -247,15 +247,20 @@ router.get("/screenshot", async (req: Request, res: Response) => {
 });
 
 router.post("/close-page", async (req: Request, res: Response) => {
-  const { pageId } = req.body;
-  const browser = getPuppeteerBrowser();
-  const pages = await browser.pages();
-  // @ts-expect-error
-  const page = pages.find((p) => p.mainFrame()._id === pageId);
-  if (page === undefined) return res.json({ success: false });
+  try {
+    const { pageId } = req.body;
+    const browser = getPuppeteerBrowser();
+    const pages = await browser.pages();
+    // @ts-expect-error
+    const page = pages.find((p) => p.mainFrame()._id === pageId);
+    if (page === undefined) return res.json({ success: false });
 
-  await page.close();
-  res.json({ success: true });
+    await page.close();
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).end();
+  }
 });
 
 export default router;
