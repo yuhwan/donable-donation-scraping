@@ -36,9 +36,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
 
-    // page.on("dialog", async (dialog) => {
-    //   await dialog.accept();
-    // });
+    page.on("dialog", async (dialog) => {
+      console.log(dialog.message());
+      await dialog.accept();
+    });
 
     // 금액 선택
     await page.select(".nm_table_tr > td > ul > li > select", "20000");
@@ -185,15 +186,11 @@ router.post(
     try {
       // 기존 페이지 찾기
       const { pageId } = req.body;
-      console.log("pageId");
       const browser = getPuppeteerBrowser();
-      console.log("browser");
       const pages = await browser.pages();
-      console.log("pages");
       // @ts-expect-error
       const page = pages.find((p) => p.mainFrame()._id === pageId);
       if (page === undefined) return res.json({ success: false });
-      console.log("page");
 
       res.json({
         success: false,
