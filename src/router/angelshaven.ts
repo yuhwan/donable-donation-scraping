@@ -191,23 +191,19 @@ router.post(
       // @ts-expect-error
       const page = pages.find((p) => p.mainFrame()._id === pageId);
       if (page === undefined) return res.json({ success: false });
-
+      
+      // page에서 체크하기
+      const checkPoint = await page.$(
+        "#ctl00_ContentPlaceHolder1_joinResultInfo"
+      );
       res.json({
-        success: false,
+        success: checkPoint !== null,
       });
 
-      // page에서 체크하기
-      // const checkPoint = await page.$(
-      //   "#ctl00_ContentPlaceHolder1_joinResultInfo"
-      // );
-      // res.json({
-      //   success: checkPoint !== null,
-      // });
-
-      // // page 닫기
-      // if (checkPoint !== null) {
-      //   await page.close();
-      // }
+      // page 닫기
+      if (checkPoint !== null) {
+        await page.close();
+      }
     } catch (error) {
       console.log(error);
       res.status(500).end();
