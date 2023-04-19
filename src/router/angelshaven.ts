@@ -53,7 +53,10 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     });
 
     // 금액 선택
-    await page.select(".nm_table_tr > td > ul > li > select", amount);
+    await page.select(
+      "#ctl00_ContentPlaceHolder1_ctl51_ctl00_ctl00_rdlamount",
+      amount
+    );
     await page.$eval(
       ".nm_form_footer_btnbox > button",
       (el: HTMLInputElement) => el.click()
