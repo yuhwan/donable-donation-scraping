@@ -36,10 +36,9 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
 
-    page.on("dialog", async (dialog) => {
-      console.log(dialog.message());
-      await dialog.accept();
-    });
+    // page.on("dialog", async (dialog) => {
+    //   await dialog.accept();
+    // });
 
     // 금액 선택
     await page.select(".nm_table_tr > td > ul > li > select", "20000");
@@ -183,25 +182,38 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
 router.post(
   "/check-finish-new-donation",
   async (req: Request, res: Response) => {
-    // 기존 페이지 찾기
-    const { pageId } = req.body;
-    const browser = getPuppeteerBrowser();
-    const pages = await browser.pages();
-    // @ts-expect-error
-    const page = pages.find((p) => p.mainFrame()._id === pageId);
-    if (page === undefined) return res.json({ success: false });
+    try {
+      // 기존 페이지 찾기
+      const { pageId } = req.body;
+      console.log("pageId");
+      const browser = getPuppeteerBrowser();
+      console.log("browser");
+      const pages = await browser.pages();
+      console.log("pages");
+      // @ts-expect-error
+      const page = pages.find((p) => p.mainFrame()._id === pageId);
+      if (page === undefined) return res.json({ success: false });
+      console.log("page");
 
-    // page에서 체크하기
-    const checkPoint = await page.$(
-      "#ctl00_ContentPlaceHolder1_joinResultInfo"
-    );
-    res.json({
-      success: checkPoint !== null,
-    });
+      res.json({
+        success: false,
+      });
 
-    // page 닫기
-    if (checkPoint !== null) {
-      await page.close();
+      // page에서 체크하기
+      // const checkPoint = await page.$(
+      //   "#ctl00_ContentPlaceHolder1_joinResultInfo"
+      // );
+      // res.json({
+      //   success: checkPoint !== null,
+      // });
+
+      // // page 닫기
+      // if (checkPoint !== null) {
+      //   await page.close();
+      // }
+    } catch (error) {
+      console.log(error);
+      res.status(500).end();
     }
   }
 );
