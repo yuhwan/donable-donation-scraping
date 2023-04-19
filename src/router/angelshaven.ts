@@ -178,7 +178,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     await page.waitForTimeout(1500);
     await page.$eval("#chkStep3Btn", (el: HTMLButtonElement) => el.click());
 
-    // 진행 확인 및 카카오 인증 요청    
+    // 진행 확인 및 카카오 인증 요청
     await page.$eval(".jconfirm-buttons > button", (el: HTMLButtonElement) =>
       el.click()
     );
@@ -267,6 +267,19 @@ router.post("/close-page", async (req: Request, res: Response) => {
 
     await page.close();
     res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).end();
+  }
+});
+
+router.get("/get-page-ids", async (req: Request, res: Response) => {
+  try {
+    const browser = getPuppeteerBrowser();
+    const pages = await browser.pages();
+    // @ts-expect-error
+    const pageIds = pages.map((p) => p.mainFrame()._id);
+    res.json({ pageIds });
   } catch (error) {
     console.log(error);
     res.status(500).end();
