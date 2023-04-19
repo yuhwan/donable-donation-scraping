@@ -33,6 +33,17 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       page = await browser.newPage();
     }
 
+    const {
+      name,
+      birthday,
+      phoneNumber,
+      bank,
+      account,
+      payDay,
+      eventName,
+      amount,
+    } = req.body;
+
     page.setViewport({ height: 2048, width: 1024 });
     await page.goto(START_NEW_DONATION_URL);
 
@@ -42,15 +53,13 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     });
 
     // 금액 선택
-    await page.select(".nm_table_tr > td > ul > li > select", "20000");
+    await page.select(".nm_table_tr > td > ul > li > select", amount);
     await page.$eval(
       ".nm_form_footer_btnbox > button",
       (el: HTMLInputElement) => el.click()
     );
 
     // 후원자 정보 입력
-    const { name, birthday, phoneNumber, bank, account, payDay, eventName } =
-      req.body;
     await page.$eval(
       "#ctl00_ContentPlaceHolder1_txtName",
       (el: HTMLInputElement, name) => (el.value = name),
@@ -68,24 +77,22 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
       "#ctl00_ContentPlaceHolder1_dBirth",
       birthday.split(".")[2]
     );
-    await page.$eval(
+    await page.type(
       "#ctl00_ContentPlaceHolder1_Mobile1",
-      (el: HTMLInputElement, phoneNumber) =>
-        (el.value = phoneNumber.split("-")[0]),
-      phoneNumber
+      phoneNumber.split("-")[0],
+      { delay: 100 }
     );
-    await page.$eval(
+    await page.type(
       "#ctl00_ContentPlaceHolder1_Mobile2",
-      (el: HTMLInputElement, phoneNumber) =>
-        (el.value = phoneNumber.split("-")[1]),
-      phoneNumber
+      phoneNumber.split("-")[1],
+      { delay: 100 }
     );
-    await page.$eval(
+    await page.type(
       "#ctl00_ContentPlaceHolder1_Mobile3",
-      (el: HTMLInputElement, phoneNumber) =>
-        (el.value = phoneNumber.split("-")[2]),
-      phoneNumber
+      phoneNumber.split("-")[2],
+      { delay: 100 }
     );
+
     await page.$eval(
       "#ctl00_ContentPlaceHolder1_txtJoinComment",
       (el: HTMLInputElement, eventName) => (el.value = eventName),
@@ -162,6 +169,7 @@ router.post("/start-new-donation", async (req: Request, res: Response) => {
     await page.$eval("#chkStep3Btn", (el: HTMLButtonElement) => el.click());
 
     // 진행 확인 및 카카오 인증 요청
+    await page.waitForTimeout(1000);
     await page.$eval(".jconfirm-buttons > button", (el: HTMLButtonElement) =>
       el.click()
     );
@@ -191,7 +199,7 @@ router.post(
       // @ts-expect-error
       const page = pages.find((p) => p.mainFrame()._id === pageId);
       if (page === undefined) return res.json({ success: false });
-      
+
       // page에서 체크하기
       const checkPoint = await page.$(
         "#ctl00_ContentPlaceHolder1_joinResultInfo"
